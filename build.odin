@@ -4,7 +4,9 @@ import "core:log"
 import "core:strings"
 import "core:slice"
 import "core:path/filepath"
-import os "core:os/os2"
+import "core:os"
+
+SHADERCROSS_BIN: string : #config(SHADERCROSS_BIN, "shadercross")
 
 main :: proc() {
   context.logger = log.create_console_logger()
@@ -30,8 +32,8 @@ main :: proc() {
 
 shadercross :: proc(file: os.File_Info, format: string) {
   basename := filepath.stem(file.name)
-  outfile := filepath.join({"content/shaders/out", strings.concatenate({basename, ".", format})})
-  run({"shadercross", file.fullpath, "-o", outfile, "-I", "content/shaders/include"})
+  outfile, err := filepath.join({"content/shaders/out", strings.concatenate({basename, ".", format})}); assert(err == nil)
+  run({SHADERCROSS_BIN, file.fullpath, "-o", outfile, "-I", "content/shaders/include"})
 }
 
 run_str :: proc(cmd: string) {
@@ -54,6 +56,5 @@ run :: proc(cmd: []string) {
 exec :: proc(cmd: []string) -> (code: int, error: os.Error) {
   process := os.process_start({ command = cmd, stdin = os.stdin, stdout = os.stdout, stderr = os.stderr }) or_return
   state := os.process_wait(process) or_return
-  os.process_close(process) or_return
   return state.exit_code, nil
 }

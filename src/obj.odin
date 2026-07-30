@@ -19,7 +19,7 @@ Obj_FaceIndex :: struct {
 }
 
 obj_load :: proc(filename: string) -> Obj_Data {
-	data, ok := os.read_entire_file_from_filename(filename); assert(ok)
+	data, err := os.read_entire_file_from_path(filename, context.allocator); assert(err == nil)
 	defer delete(data)
 
 	input_string := string(data)

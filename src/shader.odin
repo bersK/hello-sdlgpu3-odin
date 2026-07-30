@@ -35,9 +35,9 @@ load_shader :: proc(device: ^sdl.GPUDevice, shaderfile: string) -> ^sdl.GPUShade
 		log.panicf("No supported shader format: {}", supported_formats)
 	}
 
-	shaderfile := filepath.join({CONTENT_DIR, "shaders", "out", shaderfile}, context.temp_allocator)
+	shaderfile, err := filepath.join({CONTENT_DIR, "shaders", "out", shaderfile}, context.temp_allocator); assert(err == nil)
 	filename := strings.concatenate({shaderfile, format_ext}, context.temp_allocator)
-	code, ok := os.read_entire_file_from_filename(filename, context.temp_allocator); assert(ok)
+	code, err := os.read_entire_file_from_path(filename, context.temp_allocator); assert(err == nil)
 
 	info := load_shader_info(shaderfile)
 
@@ -63,7 +63,7 @@ Shader_Info :: struct {
 
 load_shader_info :: proc(shaderfile: string) -> Shader_Info {
 	json_filename := strings.concatenate({shaderfile, ".json"}, context.temp_allocator)
-	json_data, ok := os.read_entire_file_from_filename(json_filename, context.temp_allocator); assert(ok)
+	json_data, err := os.read_entire_file_from_path(json_filename, context.temp_allocator); assert(err == nil)
 	result: Shader_Info
 	err := json.unmarshal(json_data, &result, allocator = context.temp_allocator); assert(err == nil)
 	return result

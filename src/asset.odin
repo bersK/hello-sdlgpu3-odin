@@ -7,7 +7,7 @@ import stbi "vendor:stb/image"
 import sdl "vendor:sdl3"
 
 load_pixels :: proc(texture_file: string) -> (pixels: []byte, size: [2]u32) {
-	texture_path := filepath.join({CONTENT_DIR, "textures", texture_file}, context.temp_allocator)
+	texture_path, err := filepath.join({CONTENT_DIR, "textures", texture_file}, context.temp_allocator); assert(err == nil)
 
 	texture_file := strings.clone_to_cstring(texture_path, context.temp_allocator)
 
@@ -60,7 +60,7 @@ load_cubemap_texture_files :: proc(copy_pass: ^sdl.GPUCopyPass, texture_files: [
 }
 
 load_obj_file :: proc(copy_pass: ^sdl.GPUCopyPass, mesh_file: string) -> Mesh {
-	mesh_path := filepath.join({CONTENT_DIR, "meshes", mesh_file}, context.temp_allocator)
+	mesh_path, err := filepath.join({CONTENT_DIR, "meshes", mesh_file}, context.temp_allocator); assert(err == nil)
 	obj_data := obj_load(mesh_path)
 
 	vertices := make([]Vertex_Data, len(obj_data.faces))
